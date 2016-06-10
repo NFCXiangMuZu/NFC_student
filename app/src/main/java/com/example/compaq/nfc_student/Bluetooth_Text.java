@@ -58,6 +58,7 @@ public class Bluetooth_Text extends Activity implements CreateNdefMessageCallbac
 		if(bluetoothAdapter!=null){
 			//Toast.makeText(this, "蓝牙适配器非空", Toast.LENGTH_LONG).show();
 			System.out.println("蓝牙适配器非空");
+			System.out.println("蓝牙适配器非空");
 			if(bluetoothAdapter.isEnabled()){
 				//showtext.setText(macaddress);
 				//Toast.makeText(this,bluetoothAdapter.getName()+": "+bluetoothAdapter.getAddress(), Toast.LENGTH_LONG).show();
