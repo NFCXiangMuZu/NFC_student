@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NFC_Student</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="NFC_button">开启NFC</string>
+    <string name="set_button">绑定信息</string>
+    <string name="reflect_button">编辑反馈信息</string>
+    <string name="middle_button">点名中继</string>
+    <string name="sign_button">开始签到</string>
+    <string name="reflect_infor_title">请输入需要反馈的信息</string>
+    <string name="reflect_infor_input">请输入你要反馈的信息</string>
+    <string name="reflect_infor_OK">确认发送</string>
+    <string name="reflect_infor_save">保存</string>
+    <string name="MiddleAttendence">点名中继</string>
+    <string name="middle_atten_text">开始签到</string>
+    <string name="middle_atten_button">结束签到</string>
+    <string name="exit">退出软件</string>
+    <string name="about">关于我们</string>
+</resources>

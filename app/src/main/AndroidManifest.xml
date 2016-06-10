@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.nfc_student"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/nfc_student_icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <service android:enabled="true" android:name="com.example.compaq.nfc_student.TimeService" />
+        <service android:enabled="true" android:name="com.example.compaq.nfc_student.ReadFileService" />
+        <service android:enabled="true" android:name="com.example.compaq.nfc_student.SendFileService" />
+
+
+        <activity
+            android:name="com.example.compaq.nfc_student.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.example.compaq.nfc_student.Bluetooth_Text"
+            android:label="@string/app_name" >
+        </activity>
+        <!--
+        <activity
+            android:name="com.example.compaq.nfc_student.set_information"
+            android:label="@string/app_name" >
+        </activity>
+        -->
+
+        <activity
+            android:name="com.example.compaq.nfc_student.Reflect_information"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.example.compaq.nfc_student.self_information"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.example.compaq.nfc_student.MiddleAttendence"
+            android:label="@string/MiddleAttendence" >
+        </activity>
+
+        <activity
+            android:name="com.example.compaq.nfc_student.NormalAttendence"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/com.oreilly.demo.android.pa.senserdemo"/>
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/txt1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:gravity="center_horizontal"
+        android:text="个人基本信息"
+        android:textSize="35dp" />
+
+    <TextView
+        android:id="@+id/txtnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt1"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="5dp"
+        android:text="学号:"
+        android:textSize="28dp" />
+
+    <EditText
+        android:id="@+id/ednumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/txt1"
+        android:layout_marginBottom="30dp"
+        android:layout_toRightOf="@id/txtnumber" />
+
+    <TextView
+        android:id="@+id/txtname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtnumber"
+        android:layout_marginRight="5dp"
+        android:text="姓名:"
+        android:textSize="28dp" />
+
+    <EditText
+        android:id="@+id/edname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/ednumber"
+        android:layout_toRightOf="@id/txtname" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edname"
+        android:layout_marginTop="30dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="确认" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/time_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edname"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="42dp"
+         />
+
+</RelativeLayout>
