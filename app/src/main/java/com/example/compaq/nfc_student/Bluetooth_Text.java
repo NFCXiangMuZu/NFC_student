@@ -63,7 +63,7 @@ public class Bluetooth_Text extends Activity implements CreateNdefMessageCallbac
 				//Toast.makeText(this,bluetoothAdapter.getName()+": "+bluetoothAdapter.getAddress(), Toast.LENGTH_LONG).show();
 				System.out.println(bluetoothAdapter.getName()+": "+bluetoothAdapter.getAddress());
 			}else{
-				Toast.makeText(this, "蓝牙未打开o", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "蓝牙未打开", Toast.LENGTH_LONG).show();
 				Intent intent=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivity(intent);
 			}
