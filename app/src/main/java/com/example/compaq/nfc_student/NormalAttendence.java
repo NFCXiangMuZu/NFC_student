@@ -67,8 +67,8 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 		NormalAttendence.this.startService(new Intent(NormalAttendence.this,ReadFileService.class));
 
 		//开启蓝牙接收线程
-		Thread thread=new readThread();
-		thread.start();
+		//Thread thread=new readThread();
+		//thread.start();
 
 
 

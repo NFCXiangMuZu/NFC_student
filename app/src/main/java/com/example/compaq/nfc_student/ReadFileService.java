@@ -24,6 +24,7 @@ public class ReadFileService extends Service {
 	BluetoothServerThread server_thread;
 
 	//控制信息广播的接收器
+	/*
 	BroadcastReceiver readReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -51,12 +52,14 @@ public class ReadFileService extends Service {
 			}
 		}
 	};
+	*/
 
 
 	//接收其他线程消息的Handler
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
+
 			//处理消息
 			switch (msg.what) {
 				case BluetoothTools.MESSAGE_CONNECT_ERROR://连接错误
@@ -86,7 +89,7 @@ public class ReadFileService extends Service {
 					break;
 				case BluetoothTools.FILE_RECIVE_PERCENT://文件接收百分比
 					//接收文件传输百分比广播，实现进度条用
-					Log.v("调试" , "接收开始！！！！！");
+					//Log.v("调试" , "接收开始！！！！！");
 					System.out.println("接收中！！！！");
 					Intent flieIntent1 = new Intent(BluetoothTools.ACTION_FILE_RECIVE_PERCENT);
 					flieIntent1.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
@@ -106,9 +109,11 @@ public class ReadFileService extends Service {
 		// TODO Auto-generated method stub
 		super.onStart(intent, startId);
 		System.out.println("服务开启！");
+		/*
 		IntentFilter intentfilter=new IntentFilter();
 		intentfilter.addAction(BluetoothTools.ACTION_DATA_TO_GAME);
 		registerReceiver(readReceiver, intentfilter);
+		*/
 
 	}
 

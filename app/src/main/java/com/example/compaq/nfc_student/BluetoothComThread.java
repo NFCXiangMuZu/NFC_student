@@ -170,21 +170,21 @@ public class BluetoothComThread extends Thread {
 			}
 
 			String endflag = "EOF";
-			//outStream.write(endflag.getBytes());    //发送报文通知客户端关闭SOCKET
-			//Log.v("调试" ,"发送EOF");
-			//outStream.flush();
-			//close();
+			outStream.write(endflag.getBytes());    //发送报文通知客户端关闭SOCKET
+			Log.v("调试" ,"发送EOF");
+			outStream.flush();
+			close();
 		} catch (Exception ex) {
 			Log.v("调试" , "通讯中断Exception:");
 			//发送通讯失败消息
 			serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
 			ex.printStackTrace();
 		}
-		/*
+
 		finally {
 			close();
 		}
-		*/
+
 		Log.v("调试" , "BluetoothCommunThreads线程退出");
 	}
 

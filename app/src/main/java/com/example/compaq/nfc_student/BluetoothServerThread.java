@@ -67,7 +67,7 @@ public class BluetoothServerThread extends Thread {
 			serverSocket = adapter.listenUsingRfcommWithServiceRecord("Server", BluetoothTools.PRIVATE_UUID);
 			while(!isInterrupted){
 				socket = serverSocket.accept();
-				StaticValue.socket=socket;
+				//StaticValue.socket=socket;
 				if (socket != null) {
 					//开启通讯线程
 					communThread = new BluetoothComThread(serviceHandler, socket);
@@ -89,6 +89,7 @@ public class BluetoothServerThread extends Thread {
 			e.printStackTrace();
 			return;
 		}
+		/*
 		finally {
 			Log.v("调试" , "BluetoothServerConnThread退出");
 			try {
@@ -98,6 +99,7 @@ public class BluetoothServerThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 
 }
