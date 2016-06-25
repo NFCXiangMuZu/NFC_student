@@ -110,6 +110,7 @@ public class BluetoothComThread extends Thread {
 					transmit.setFilename(filename);
 					long  datalength = totalLen-1-4-1-fn.length;//文件数据
 					String savePath = Environment.getExternalStorageDirectory().getPath() + "/" + transmit.getFilename();
+					StaticValue.filename_for_middle=savePath;
 					transmit.setFilepath(savePath);
 					FileOutputStream file=new FileOutputStream(savePath, false);
 					byte[] buffer = new byte[1024*1024];

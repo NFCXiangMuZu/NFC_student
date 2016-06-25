@@ -29,7 +29,7 @@ public class SendFileService extends Service {
 				@Override
 				public void onReceive(Context context, Intent intent) {
 					System.out.println("开始连接");
-					device=adapter.getRemoteDevice(StaticValue.macaddress);
+					device=adapter.getRemoteDevice(StaticValue.remote_macaddress);
 	            	    if(device!=null){
 	            	    	System.out.println("连接成功");
 	            	    	System.out.println("设备名为："+device.getName());

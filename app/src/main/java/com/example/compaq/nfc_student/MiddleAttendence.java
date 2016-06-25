@@ -9,8 +9,14 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -39,6 +45,9 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 	Button middle_atten_button;
 	NfcAdapter nfcadapter;
 	PendingIntent pendingintent;
+	BluetoothDevice bluetoothDevice;
+	BluetoothSocket bluetoothSocket;
+	BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	public List<String> list=new ArrayList<String>();
 
 	@SuppressLint("NewApi")
@@ -49,6 +58,7 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		setContentView(R.layout.middle_attendence);
 
 		//初始化list
+		list.add(StaticValue.macaddress);
 		list.add(StaticValue.setname);
 		list.add(StaticValue.setnumber);
 		list.add(StaticValue.reflect_information);
@@ -63,6 +73,13 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 		nfcadapter.setNdefPushMessageCallback(this, this);
 		nfcadapter.setOnNdefPushCompleteCallback(this, this);
+
+		//注册接收发送成功信息的广播
+		IntentFilter intentfilter=new IntentFilter();
+		intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
+		registerReceiver(receiver, intentfilter);
+
+		MiddleAttendence.this.startService(new Intent(MiddleAttendence.this,SendFileService.class));
 
 	}
 
@@ -263,9 +280,11 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			// 获取id数组
 			//byte[] bytesId = tag.getId();
 			System.out.println("自动写入成功");
-			String result_strname=new String(msg.getRecords()[0].getPayload(),"UTF-8");
-			String result_strxuehao=new String(msg.getRecords()[1].getPayload(),"UTF-8").substring(1,11);
-			String result_strreflect_infor=new String(msg.getRecords()[2].getPayload(),"UTF-8");
+			String result_macaddress = new String(msg.getRecords()[0].getPayload(), "GBK").substring(1);
+			String result_strname=new String(msg.getRecords()[1].getPayload(),"UTF-8");
+			String result_strxuehao=new String(msg.getRecords()[2].getPayload(),"UTF-8").substring(1,11);
+			String result_strreflect_infor=new String(msg.getRecords()[3].getPayload(),"UTF-8");
+			list.add(result_macaddress);
 			list.add(result_strname);
 			list.add(result_strxuehao);
 			list.add(result_strreflect_infor);
@@ -278,9 +297,84 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 					+"\n学号是："+list.get(list.size()-2).toString()
 					+"\n反馈信息是："+list.get(list.size()-1).toString(), Toast.LENGTH_LONG).show();
 
+
+			System.out.println("+++++++++" + result_macaddress);
+			StaticValue.remote_macaddress = result_macaddress;
+			//Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
+			bluetoothDevice = bluetoothAdapter.getRemoteDevice(result_macaddress);
+			if (bluetoothDevice != null) {
+				System.out.println("==获取成功==");
+				System.out.println("地址是：" + bluetoothDevice.getName());
+			}
+			try {
+				//ClsUtils.removeBond(bluetoothDevice.getClass(), bluetoothDevice);
+				//System.out.println("取消配对！！");
+     	            	    	/*
+     	            	    	ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000"); // 手机和蓝牙采集器配对
+     	            	    	ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
+     	            	    	ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
+     	            	    	*/
+				ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
+				ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
+				ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
+				System.out.println("配对成功！！");
+				//ClsUtils.pair(result_macaddress, "0000");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println("地址是："+bluetoothDevice.getName());
+			if (StaticValue.filename_for_middle != null) {
+				Thread thead = new sendThread();
+				thead.start();
+				System.out.println("连接线程启动成功！！");
+			} else {
+				System.out.println("无文件可发！！");
+			}
+
 		}
 	}
 
+	private class sendThread extends Thread {
+
+		public sendThread(){
+
+
+		}
+
+		public void run() {
+
+			TransmitBean transmit = new TransmitBean();
+			String path=StaticValue.filename_for_middle;
+			String filename=path.substring(path.lastIndexOf("/")+1,path.length());
+			transmit.setFilename(filename);
+			transmit.setFilepath(path);
+			Intent sendDataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_SERVICE);
+			sendDataIntent.putExtra(BluetoothTools.DATA, transmit);
+			sendBroadcast(sendDataIntent);
+
+			System.out.println("广播成功！！！！");
+			//Toast.makeText(Bluetooth_Text.this, buffer.toString(), Toast.LENGTH_LONG).show();
+			//showtext.setText(buffer.toString());
+		}
+	}
+
+
+	BroadcastReceiver receiver=new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+
+			// TODO Auto-generated method stub
+
+			System.out.println("文件传输成功！！");
+			String action = arg1.getAction();
+			if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
+				Toast.makeText(MiddleAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
+			}
+
+		}
+	};
 
 
 }

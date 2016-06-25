@@ -21,8 +21,10 @@ public class StaticValue {
 	public static int bind_mark=1;
 	public static BluetoothSocket socket=null;
 	public static String macaddress=bluetoothadapter.getAddress();
+	public static String remote_macaddress=null;
 	public static String filename_for_send=null;
 	public static String file_path=null;
+	public static String filename_for_middle=null;
 
 
 }
