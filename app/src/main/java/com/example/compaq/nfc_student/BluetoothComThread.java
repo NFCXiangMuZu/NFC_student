@@ -156,6 +156,11 @@ public class BluetoothComThread extends Thread {
 			msg.obj = transmit;
 			msg.sendToTarget();
 
+			Message msg_success = serviceHandler.obtainMessage();
+			msg_success.what = BluetoothTools.FILE_RECEIVE_SUCCESS;
+			msg_success.obj=transmit;
+			msg_success.sendToTarget();
+
 			TransmitBean transmit_s = new TransmitBean();
 			if(type==1){
 //				transmit_s.setFilename("mu.zip");

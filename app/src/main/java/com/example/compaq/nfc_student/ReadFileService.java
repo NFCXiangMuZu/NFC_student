@@ -95,8 +95,11 @@ public class ReadFileService extends Service {
 					flieIntent1.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
 					sendBroadcast(flieIntent1);
 					break;
-				case BluetoothTools.FILE_SEND_SUCCESS://文件接收成功
+				case BluetoothTools.FILE_RECEIVE_SUCCESS://文件接收成功
 					Log.v("调试" , "接收成功！！！！！");
+					Intent success_intent = new Intent(BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS);
+					success_intent.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
+					sendBroadcast(success_intent);
 					break;
 			}
 			super.handleMessage(msg);

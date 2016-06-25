@@ -106,6 +106,11 @@ public class BluetoothTools {
 	public static final String ACTION_FILE_RECIVE_PERCENT = "ACTION_FILE_RECIVE_PERCENT";
 
 	/**
+	 * Action：发送文件成功
+	 */
+	public static final String ACTION_FILE_RECEIVE_SUCCESS = "ACTION_FILE_RECEIVE_SUCCESS";
+
+	/**
 	 * Action：连接成功
 	 */
 	public static final String ACTION_CONNECT_SUCCESS = "ACTION_CONNECT_SUCCESS";
@@ -148,6 +153,11 @@ public class BluetoothTools {
 	 * Message：文件发送成功
 	 */
 	public static final int FILE_SEND_SUCCESS = 0x00000007;
+
+	/**
+	 * Message：文件发送成功
+	 */
+	public static final int FILE_RECEIVE_SUCCESS = 0x00000008;
 
 	/**
 	 * 打开蓝牙功能

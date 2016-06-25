@@ -16,8 +16,11 @@ import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -69,6 +72,11 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 		//开启蓝牙接收线程
 		//Thread thread=new readThread();
 		//thread.start();
+
+		//注册广播
+		IntentFilter intentfilter=new IntentFilter();
+		intentfilter.addAction(BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS);
+		registerReceiver(readReceiver, intentfilter);
 
 
 
@@ -334,6 +342,22 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 
 		}
 	}
+
+	//接收“文件传输成功”信号的广播
+	BroadcastReceiver readReceiver = new BroadcastReceiver(){
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			System.out.println("传输成功广播收到！");
+			//intent.getExtras().getSerializable(BluetoothTools.DATA);
+			String action = intent.getAction();
+			if (BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS.equals(action)) {
+                 Toast.makeText(NormalAttendence.this,"文件接收成功！",Toast.LENGTH_LONG).show();
+			}
+
+		}
+
+	};
 
 
 
