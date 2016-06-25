@@ -233,7 +233,7 @@ public class BluetoothCommunSocket {
 						msg.obj = up;
 						msg.sendToTarget();
 					}
-					Log.v("调试" , "接收完成啦啦啦,receivelen:"+receivelen);
+					Log.v("调试" , "接收完成,receivelen:"+receivelen);
 					Message msg = serviceHandler.obtainMessage();
 					msg.what = BluetoothTools.FILE_SEND_SUCCESS;
 					msg.sendToTarget();
