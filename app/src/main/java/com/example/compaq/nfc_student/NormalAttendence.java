@@ -1,12 +1,8 @@
 package com.example.compaq.nfc_student;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -14,8 +10,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,7 +25,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,23 +46,31 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 	protected static final int MESSAGE_SENT = 0;
 	NfcAdapter nfcadapter;
 	PendingIntent pendingintent;
-	TextView showtext;
 	BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-	private final UUID MY_UUID = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3");
-	private final String NAME = "Hyman";
-	byte[] buffer = new byte[1024];
+	Button normal_attendence_NB_backbutton;
+	Button normal_attendence_NB_folderbutton;
+	Button normal_attendence_centerbutton;
+	PopupMenu normal_attendence_NB_folder_menu;
+	//检查身份信息窗口
+	PopupWindow normal_attendence_window;
+	Button normal_attendence_window_closebutton;
+	EditText normal_attendence_window_xuehao_edit;
+	EditText normal_attendence_window_name_edit;
+	EditText normal_attendence_window_reflect_infor_edit;
+	Button normal_attendence_window_confirmbutton;
 
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置无标题
 		setContentView(R.layout.normalattendence);
+
+		init_layout();
 
 
 		nfcadapter=NfcAdapter.getDefaultAdapter(this);
-		showtext=(TextView)findViewById(R.id.textView1);
-		showtext.setText("正在签到");
 
 		pendingintent=PendingIntent.getActivity(this, 0,
 				new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -69,10 +80,6 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 
 		NormalAttendence.this.startService(new Intent(NormalAttendence.this,ReadFileService.class));
 
-		//开启蓝牙接收线程
-		//Thread thread=new readThread();
-		//thread.start();
-
 		//注册广播
 		IntentFilter intentfilter=new IntentFilter();
 		intentfilter.addAction(BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS);
@@ -80,6 +87,110 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 
 
 
+
+	}
+
+	//初始化layout
+	private void init_layout(){
+
+		normal_attendence_NB_backbutton = (Button)findViewById(R.id.normal_attendence_NB_backbutton);
+		normal_attendence_NB_folderbutton = (Button)findViewById(R.id.normal_attendence_NB_folderbutton);
+		normal_attendence_centerbutton = (Button)findViewById(R.id.normal_attendence_centerbutton);
+
+        normal_attendence_NB_backbutton.setOnClickListener(new listener());
+		normal_attendence_NB_folderbutton.setOnClickListener(new listener());
+		normal_attendence_centerbutton.setText("点击查看");
+		normal_attendence_centerbutton.setOnClickListener(new listener());
+
+
+
+	}
+
+	//弹出窗口
+	private void show_normal_attendence_window(){
+
+		View contentView = LayoutInflater.from(NormalAttendence.this).inflate(R.layout.normal_attendence_window, null);
+		//sign_in_window = new PopupWindow(contentView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+		normal_attendence_window = new PopupWindow(contentView,600, 550);
+		normal_attendence_window.setFocusable(true);
+
+		//初始化layout
+		normal_attendence_window_closebutton = (Button)contentView.findViewById(R.id.normal_attendence_window_close_button);
+		normal_attendence_window_xuehao_edit = (EditText)contentView.findViewById(R.id.normal_attendence_window_xuehao_edit);
+		normal_attendence_window_name_edit = (EditText)contentView.findViewById(R.id.normal_attendence_window_name_edit);
+		normal_attendence_window_reflect_infor_edit = (EditText)contentView.findViewById(R.id.normal_attendence_window_reflect_infor_edit);
+		normal_attendence_window_confirmbutton = (Button)contentView.findViewById(R.id.normal_attendence_window_confirm_button);
+
+		normal_attendence_window_xuehao_edit.setText(StaticValue.setnumber);
+		normal_attendence_window_name_edit.setText(StaticValue.setname);
+		normal_attendence_window_xuehao_edit.setEnabled(false);
+		normal_attendence_window_name_edit.setEnabled(false);
+		normal_attendence_window_reflect_infor_edit.setText(StaticValue.reflect_information);
+
+		normal_attendence_window_closebutton.setOnClickListener(new listener());
+		normal_attendence_window_confirmbutton.setOnClickListener(new listener());
+
+		//显示PopupWindow
+		View rootview = LayoutInflater.from(NormalAttendence.this).inflate(R.layout.activity_main, null);
+		normal_attendence_window.showAtLocation(rootview, Gravity.CENTER, 0, 0);
+
+	}
+
+	//总监听器
+	class listener implements View.OnClickListener{
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			switch(arg0.getId()){
+
+				case R.id.normal_attendence_NB_backbutton:
+					Intent intent_back=new Intent();
+					intent_back.setClass(NormalAttendence.this,MainActivity.class);
+					NormalAttendence.this.startActivity(intent_back);
+					finish();
+					break;
+
+				case R.id.normal_attendence_NB_folderbutton:
+					normal_attendence_NB_folder_menu = new PopupMenu(NormalAttendence.this,normal_attendence_NB_folderbutton);
+					//加载menu资源
+					getMenuInflater().inflate(R.menu.normal_attendence_folder_menu,normal_attendence_NB_folder_menu.getMenu());
+					//绑定点击事件
+					normal_attendence_NB_folder_menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+
+							switch (item.getItemId()) {
+
+
+
+							}
+
+							return false;
+
+						}
+					});
+
+					normal_attendence_NB_folder_menu.show();
+					break;
+
+				case R.id.normal_attendence_window_close_button:
+					normal_attendence_window.dismiss();
+					break;
+
+				case R.id.normal_attendence_centerbutton:
+					show_normal_attendence_window();
+					break;
+
+				case R.id.normal_attendence_window_confirm_button:
+				    StaticValue.reflect_information = normal_attendence_window_reflect_infor_edit.getText().toString().trim();
+					normal_attendence_window.dismiss();
+					break;
+
+				default:
+					break;
+			}
+		}
 
 	}
 
@@ -282,43 +393,6 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 		}
 
 	}
-    /*
-    public class AcceptThread extends Thread{
-        BluetoothServerSocket serverSocket;
-        public AcceptThread() {
-        	BluetoothServerSocket tmp=null;
-            try{
-                tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME,MY_UUID);
-            }catch (Exception e){
-
-            }
-            serverSocket=tmp;
-        }
-
-        public void run(){
-        	BluetoothSocket socket=null;
-        	InputStream in;
-            try {
-            	socket=serverSocket.accept();
-            	StaticValue.socket=socket;
-            	if(socket!=null){
-	            	System.out.println("蓝牙连接成功");
-	            	//Toast.makeText(Bluetooth_Text.this, "蓝牙连接成功", Toast.LENGTH_LONG).show();
-
-
-	            	NormalAttendence.this.startService(new Intent(NormalAttendence.this,ReadFileService.class));
-	            	Thread readtext=new readThread(socket);
-	            	readtext.start();
-	            }
-
-
-            }catch (Exception e){
-
-            }
-
-            }
-        }
-        */
 
 	private class readThread extends Thread {
 
@@ -332,8 +406,7 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 			Intent sendDataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_GAME);
 			sendBroadcast(sendDataIntent);
 			System.out.println("广播成功！！！！");
-			//Toast.makeText(Bluetooth_Text.this, buffer.toString(), Toast.LENGTH_LONG).show();
-			//showtext.setText(buffer.toString());
+
 
 
 
@@ -341,6 +414,13 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 
 
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		unregisterReceiver(readReceiver);
+		super.onDestroy();
 	}
 
 	//接收“文件传输成功”信号的广播

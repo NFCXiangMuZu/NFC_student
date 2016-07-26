@@ -10,8 +10,8 @@ import android.nfc.NdefMessage;
 
 public class StaticValue {
 	public static BluetoothAdapter bluetoothadapter= BluetoothAdapter.getDefaultAdapter();
-	public static String setnumber="1325114014";
-	public static String setname="黄明";
+	public static String setnumber="请登录";
+	public static String setname="请登录";
 	public static String reflect_information="无信息反馈";
 	public static int status=0;
 	public static  Uri path=null;
@@ -25,6 +25,8 @@ public class StaticValue {
 	public static String filename_for_send=null;
 	public static String file_path=null;
 	public static String filename_for_middle=null;
+
+
 
 
 }

@@ -16,17 +16,15 @@ public class TimeService extends Service
     private Timer timer = null;  
     private TimerTask task=new TimerTask() {  
         @Override  
-        public void run() {  
-            //���͹㲥  
+        public void run() {
             System.out.println("-----------out----------"+StaticValue.count);
             StaticValue.count++;
-            //self_information.time_show.setText("ʣ��ʱ�䣺"+(20-StaticValue.count));
             if(StaticValue.count>50){
             	StaticValue.count=0;
             	StaticValue.start_mark=0;
             	StaticValue.bind_mark=1;
-            	timer.cancel();
-            	task.cancel();
+            	//timer.cancel();
+            	//task.cancel();
             }
         }  
     };
@@ -35,8 +33,7 @@ public class TimeService extends Service
     public void onCreate() {  
         super.onCreate();   
         
-        timer = new Timer();  
-        //��ʱ�����͹㲥  
+        timer = new Timer();
         timer.schedule(task,1000,1000); 
         
     } 

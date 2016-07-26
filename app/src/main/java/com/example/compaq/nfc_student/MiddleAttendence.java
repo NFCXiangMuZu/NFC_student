@@ -2,6 +2,7 @@ package com.example.compaq.nfc_student;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -31,7 +32,10 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,35 +45,41 @@ import com.example.nfc_student.R;
 public class MiddleAttendence extends Activity implements CreateNdefMessageCallback,OnNdefPushCompleteCallback{
 
 	private static final int MESSAGE_SENT = 0;
-	TextView middle_atten_text;
-	Button middle_atten_button;
 	NfcAdapter nfcadapter;
 	PendingIntent pendingintent;
 	BluetoothDevice bluetoothDevice;
 	BluetoothSocket bluetoothSocket;
 	BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+	Button middle_attendence_NB_leftbutton;
+	Button  middle_attendence_NB_rightbutton;
+	ListView middle_attendence_listview;
+
 	public List<String> list=new ArrayList<String>();
+
 
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置无标题
 		setContentView(R.layout.middle_attendence);
 
+		//初始化layout
+		init_layout();
+
 		//初始化list
+		/*
 		list.add(StaticValue.macaddress);
 		list.add(StaticValue.setname);
 		list.add(StaticValue.setnumber);
 		list.add(StaticValue.reflect_information);
+		*/
 
 		nfcadapter=NfcAdapter.getDefaultAdapter(this);
 		pendingintent=PendingIntent.getActivity(this, 0,
 				new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-		middle_atten_text=(TextView)findViewById(R.id.middle_atten_text);
-		middle_atten_button=(Button)findViewById(R.id.middle_atten_button);
-		middle_atten_button.setOnClickListener(new listener());
 
 		nfcadapter.setNdefPushMessageCallback(this, this);
 		nfcadapter.setOnNdefPushCompleteCallback(this, this);
@@ -83,6 +93,26 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 	}
 
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+
+	//初始化layout
+	private void init_layout(){
+
+		middle_attendence_NB_leftbutton = (Button)findViewById(R.id.middle_attendence_leftbutton);
+		middle_attendence_NB_rightbutton = (Button)findViewById(R.id.middle_attendence_rightbutton);
+		middle_attendence_listview = (ListView)findViewById(R.id.middle_attendence_listview);
+
+		middle_attendence_NB_leftbutton.setOnClickListener(new listener());
+		middle_attendence_NB_rightbutton.setOnClickListener(new listener());
+
+	}
+
 	//按钮监听器
 	class listener implements View.OnClickListener{
 
@@ -90,10 +120,11 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			switch (arg0.getId()) {
-				case R.id.middle_atten_button:
-					Intent intent=new Intent();
-					intent.setClass(MiddleAttendence.this,MainActivity.class);
-					MiddleAttendence.this.startActivity(intent);
+
+				case R.id.middle_attendence_leftbutton:
+					Intent intent_back=new Intent();
+					intent_back.setClass(MiddleAttendence.this,MainActivity.class);
+					MiddleAttendence.this.startActivity(intent_back);
 					finish();
 					break;
 
@@ -288,14 +319,27 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			list.add(result_strname);
 			list.add(result_strxuehao);
 			list.add(result_strreflect_infor);
-			middle_atten_text.setText("保存成功\n"+"数组的长度为"+list.size()
-					+"\n姓名是："+list.get(list.size()-3).toString()
-					+"\n学号是："+list.get(list.size()-2).toString()
-					+"\n反馈信息是："+list.get(list.size()-1).toString());
-			Toast.makeText(this, "保存成功\n"
-					+"姓名是："+list.get(list.size()-3).toString()
-					+"\n学号是："+list.get(list.size()-2).toString()
-					+"\n反馈信息是："+list.get(list.size()-1).toString(), Toast.LENGTH_LONG).show();
+
+			//更新ListView内容
+			ArrayList<HashMap<String,Object>> listitem = new ArrayList<HashMap<String,Object>>();
+			for(int i=0;i<list.size();i+=4){
+
+				HashMap<String,Object> map = new HashMap<String,Object>();
+				//map.put("middle_attendence_listview_image_item",R.drawable.wechat4);
+				map.put("middle_attendence_listview_xuehao_item",list.get(i+1));
+				map.put("middle_attendence_listview_name_item",list.get(i+2));
+				listitem.add(map);
+
+			}
+			//生成适配器
+			SimpleAdapter listitemadapter = new SimpleAdapter(this,
+					listitem,
+					R.layout.middle_attendence_list_item,
+					new String[] {"middle_attendence_listview_xuehao_item","middle_attendence_listview_name_item"},
+					new int[] {R.id.middle_attendence_listview_xuehao_item,R.id.middle_attendence_listview_name_item}
+					);
+
+			middle_attendence_listview.setAdapter(listitemadapter);
 
 
 			System.out.println("+++++++++" + result_macaddress);
@@ -307,13 +351,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 				System.out.println("地址是：" + bluetoothDevice.getName());
 			}
 			try {
-				//ClsUtils.removeBond(bluetoothDevice.getClass(), bluetoothDevice);
-				//System.out.println("取消配对！！");
-     	            	    	/*
-     	            	    	ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000"); // 手机和蓝牙采集器配对
-     	            	    	ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
-     	            	    	ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
-     	            	    	*/
 				ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
 				ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
 				ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
@@ -327,6 +364,7 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			if (StaticValue.filename_for_middle != null) {
 				Thread thead = new sendThread();
 				thead.start();
+				System.out.println("文件目录为："+StaticValue.filename_for_middle);
 				System.out.println("连接线程启动成功！！");
 			} else {
 				System.out.println("无文件可发！！");
@@ -354,8 +392,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			sendBroadcast(sendDataIntent);
 
 			System.out.println("广播成功！！！！");
-			//Toast.makeText(Bluetooth_Text.this, buffer.toString(), Toast.LENGTH_LONG).show();
-			//showtext.setText(buffer.toString());
 		}
 	}
 
