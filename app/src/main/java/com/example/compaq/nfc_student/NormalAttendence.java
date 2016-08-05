@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -59,6 +60,9 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 	EditText normal_attendence_window_reflect_infor_edit;
 	Button normal_attendence_window_confirmbutton;
 
+	//文件传输进度条实现
+	ProgressDialog read_file_show_dialog;
+
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,7 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 		//注册广播
 		IntentFilter intentfilter=new IntentFilter();
 		intentfilter.addAction(BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS);
+		intentfilter.addAction(BluetoothTools.ACTION_FILE_RECIVE_PERCENT);
 		registerReceiver(readReceiver, intentfilter);
 
 
@@ -202,27 +207,18 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 					//Toast.makeText(getApplicationContext(), "传输成功", Toast.LENGTH_LONG).show();
 					//弹出框定义
 
-					AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
+					//AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
 					if(StaticValue.status==1){
-						alertdialog.setTitle("                 签到完成");
-					}
-					else{
-						alertdialog.setTitle("                 签到未完成");
-					}
-					alertdialog.setPositiveButton("回到主页",new DialogInterface.OnClickListener(){
+						//alertdialog.setTitle("                 签到完成");
 
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							Intent intent=new Intent();
-							intent.setClass(NormalAttendence.this,MainActivity.class);
-							NormalAttendence.this.startActivity(intent);
-							finish();
-						}
+						//实现文件接受进度dialog
+						read_file_show_dialog = new ProgressDialog(NormalAttendence.this);
+						read_file_show_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						read_file_show_dialog.setCancelable(true);
+						read_file_show_dialog.setTitle("文件接收中");
+						read_file_show_dialog.show();
 
-					});
-					alertdialog.setNegativeButton("继续签到", null);
-					alertdialog.show();
+					}
 					break;
 			}
 		}
@@ -433,6 +429,14 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 			String action = intent.getAction();
 			if (BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS.equals(action)) {
                  Toast.makeText(NormalAttendence.this,"文件接收成功！",Toast.LENGTH_LONG).show();
+				 read_file_show_dialog.cancel();
+			}else if(BluetoothTools.ACTION_FILE_RECIVE_PERCENT.equals(action)){
+
+				read_file_show_dialog.setMax(StaticValue.file_send_length);
+				read_file_show_dialog.setProgress(StaticValue.file_send_percent);
+				System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
+
+
 			}
 
 		}

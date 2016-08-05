@@ -100,6 +100,7 @@ public class ReadFileService extends Service {
 					Intent success_intent = new Intent(BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS);
 					success_intent.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
 					sendBroadcast(success_intent);
+					StaticValue.file_send_percent = 0;
 					break;
 			}
 			super.handleMessage(msg);

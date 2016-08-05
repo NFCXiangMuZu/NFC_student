@@ -109,6 +109,7 @@ public class BluetoothComThread extends Thread {
 					Log.v("调试" , "filename:"+filename);
 					transmit.setFilename(filename);
 					long  datalength = totalLen-1-4-1-fn.length;//文件数据
+					StaticValue.file_send_length = (int)datalength/(1024*1024);
 					String savePath = Environment.getExternalStorageDirectory().getPath() + "/" + transmit.getFilename();
 					StaticValue.filename_for_middle=savePath;
 					transmit.setFilepath(savePath);
@@ -123,6 +124,7 @@ public class BluetoothComThread extends Thread {
 						size=inStream.read(buffer);
 						file.write(buffer, 0 ,size);
 						receivelen+=size;
+						StaticValue.file_send_percent = (int)receivelen/(1024*1024);
 						i++;
 						if(i%10==0){
 							long time2=Calendar.getInstance().getTimeInMillis();
@@ -143,6 +145,7 @@ public class BluetoothComThread extends Thread {
 						msg.sendToTarget();
 					}
 					Log.v("调试" , "接收完成,receivelen:"+receivelen);
+					Log.v("调试" , "接收完成,totallength:"+totalLen);
 					file.flush();
 					file.close();
 				} catch (FileNotFoundException e) {

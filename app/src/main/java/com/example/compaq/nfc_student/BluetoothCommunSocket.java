@@ -129,6 +129,9 @@ public class BluetoothCommunSocket {
 					}
 					fins.close();
 					Log.v("调试" , "文件发送完成");
+					Message msg = serviceHandler.obtainMessage();
+					msg.what = BluetoothTools.FILE_SEND_SUCCESS;
+					msg.sendToTarget();
 
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -201,6 +204,7 @@ public class BluetoothCommunSocket {
 					Log.v("调试" , "filename:"+filename);
 					transmit_r.setFilename(filename);
 					long datalength = totalLen-1-4-1-fn.length;//文件数据
+					System.out.println("++++++++++++++===============接收文件总长度为："+datalength);
 					String savePath = Environment.getExternalStorageDirectory().getPath() + "/" + transmit_r.getFilename();
 					transmit_r.setFilepath(savePath);
 					FileOutputStream file=new FileOutputStream(savePath, false);
