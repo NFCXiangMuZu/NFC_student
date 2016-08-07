@@ -87,6 +87,7 @@ public class BluetoothCommunSocket {
 				byte[] data=new byte[f_len];
 				data=filename.getBytes("GBK");
 				long totalLen = 4+1+1+f_len+fileDataLen;//数据的总长度
+				StaticValue.file_send_length = (int)totalLen/(1024*1024);
 				outStream.writeLong(totalLen); //1.写入数据的总长度
 				outStream.writeByte(type);//2.写入类型
 				outStream.writeByte(f_len); //3.写入文件名的长度
@@ -106,6 +107,7 @@ public class BluetoothCommunSocket {
 						outStream.write(buffer, 0, size);
 						outStream.flush();
 						sendlen+=size;
+						StaticValue.file_send_percent = (int)sendlen/(1024*1024);
 						Log.v("调试" , "fileDataLen:"+fileDataLen);
 						i++;
 						if(i%5==0){
@@ -127,6 +129,8 @@ public class BluetoothCommunSocket {
 						msg.obj = up;
 						msg.sendToTarget();
 					}
+					long time2=Calendar.getInstance().getTimeInMillis();
+					StaticValue.file_send_time = (double)(time2-time1)/1000;
 					fins.close();
 					Log.v("调试" , "文件发送完成");
 					Message msg = serviceHandler.obtainMessage();

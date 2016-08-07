@@ -27,6 +27,7 @@ public class StaticValue {
 	public static String filename_for_middle=null;
 	public static int file_send_percent = 0;
 	public static int file_send_length = 0;
+	public static double file_send_time = 0.0;
 
 
 

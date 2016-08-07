@@ -10,6 +10,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -51,6 +52,9 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 	BluetoothSocket bluetoothSocket;
 	BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+	//显示文件传输进度
+	ProgressDialog file_send_dialog;
+
 	Button middle_attendence_NB_leftbutton;
 	Button  middle_attendence_NB_rightbutton;
 	ListView middle_attendence_listview;
@@ -87,6 +91,7 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		//注册接收发送成功信息的广播
 		IntentFilter intentfilter=new IntentFilter();
 		intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
+		intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_PERCENT);
 		registerReceiver(receiver, intentfilter);
 
 		MiddleAttendence.this.startService(new Intent(MiddleAttendence.this,SendFileService.class));
@@ -364,6 +369,12 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			if (StaticValue.filename_for_middle != null) {
 				Thread thead = new sendThread();
 				thead.start();
+				//进度条对话框显示
+				file_send_dialog = new ProgressDialog(MiddleAttendence.this);
+				file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				file_send_dialog.setTitle("文件发送中");
+				file_send_dialog.setCancelable(true);
+				file_send_dialog.show();
 				System.out.println("文件目录为："+StaticValue.filename_for_middle);
 				System.out.println("连接线程启动成功！！");
 			} else {
@@ -406,7 +417,16 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			System.out.println("文件传输成功！！");
 			String action = arg1.getAction();
 			if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
+				file_send_dialog.cancel();
 				Toast.makeText(MiddleAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
+			}else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
+
+				System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
+				file_send_dialog.setMax(StaticValue.file_send_length);
+				file_send_dialog.setProgress(StaticValue.file_send_percent);
+				System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
+
+
 			}
 
 		}
