@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.net.Uri;
 import android.nfc.NdefMessage;
+import android.os.Environment;
 
 public class StaticValue {
 	public static BluetoothAdapter bluetoothadapter= BluetoothAdapter.getDefaultAdapter();
@@ -23,11 +24,13 @@ public class StaticValue {
 	public static String macaddress=bluetoothadapter.getAddress();
 	public static String remote_macaddress=null;
 	public static String filename_for_send=null;
+	public static String save_file_path = null;
 	public static String file_path=null;
 	public static String filename_for_middle=null;
 	public static int file_send_percent = 0;
 	public static int file_send_length = 0;
 	public static double file_send_time = 0.0;
+	public static String SDPATH = Environment.getExternalStorageDirectory().getPath();
 
 
 

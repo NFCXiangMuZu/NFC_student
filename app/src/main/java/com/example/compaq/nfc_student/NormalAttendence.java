@@ -1,7 +1,10 @@
 package com.example.compaq.nfc_student;
 
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import android.annotation.SuppressLint;
@@ -72,6 +75,20 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 		setContentView(R.layout.normalattendence);
 
 		init_layout();
+
+		Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//定义格式，不显示毫秒
+		String str = df.format(now);
+		System.out.println(StaticValue.SDPATH+"/NFC—课堂点名/已接收文件/"+str+"/");
+        StaticValue.save_file_path = StaticValue.SDPATH+"/NFC—课堂点名/已接收文件/"+str+"/";
+
+		if(FileHelper.mkDir(StaticValue.SDPATH+"/NFC—课堂点名/已接收文件/"+str+"/"))//创建新文件夹
+		{
+			System.out.println("文件创建成功");
+		}else {
+			System.out.println("文件创建失败");
+
+		}
 
 
 		nfcadapter=NfcAdapter.getDefaultAdapter(this);
@@ -430,6 +447,21 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 			if (BluetoothTools.ACTION_FILE_RECEIVE_SUCCESS.equals(action)) {
                  Toast.makeText(NormalAttendence.this,"文件接收成功！",Toast.LENGTH_LONG).show();
 				 read_file_show_dialog.cancel();
+
+				String receive_file_path = StaticValue.save_file_path+"传输中间文件.zip";
+				String release_path = StaticValue.save_file_path;
+
+				//解压文件
+				try {
+					ZIPControl.readByApacheZipFile(receive_file_path,release_path);
+					FileHelper.deleteFile(receive_file_path);
+					Toast.makeText(NormalAttendence.this,"文件存储位置："+StaticValue.save_file_path,Toast.LENGTH_LONG).show();
+				}catch (IOException e){
+					Toast.makeText(NormalAttendence.this,"解压失败！",Toast.LENGTH_LONG).show();
+					System.out.println("解压失败");
+				}
+
+
 			}else if(BluetoothTools.ACTION_FILE_RECIVE_PERCENT.equals(action)){
 
 				read_file_show_dialog.setMax(StaticValue.file_send_length);

@@ -64,6 +64,9 @@ public class MainActivity extends Activity {
 		//初始化layout
 		init_layout();
 
+		//建立软件文件暂存文件夹
+		FileHelper.mkDir(StaticValue.SDPATH+"/NFC-课堂点名/");
+
 		//获取手机唯一的IMEI号
 		TelephonyManager TelephonyMgr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
 		String szImei = TelephonyMgr.getDeviceId();
