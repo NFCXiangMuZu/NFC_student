@@ -1,8 +1,9 @@
 package com.example.compaq.nfc_student;
 
 /**
- * Created by Compaq on 2016/8/10.
+ * 文件解压缩工具类
  */
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -21,19 +22,19 @@ import java.util.zip.ZipInputStream;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.apache.tools.zip.ZipOutputStream;
-
 import android.util.Log;
+
 /**
  *
  * [一句话功能简述]<BR>
  * [功能详细描述]
- * @author zhouxin
  * @version [Android MTVClient C01, 2011-3-4]
  */
 public class ZIPControl
 {
     private static boolean isCreateSrcDir = false;//是否创建源目录 在这里的话需要说明下。如果需要创建源目录的话。就在这里设为true否则为false;
     private static String TAG="ZipControl";
+
     /**
      *
      * [对指定路径下文件的压缩处理]<BR>
@@ -105,6 +106,7 @@ public class ZIPControl
         @SuppressWarnings("unused")
         BufferedInputStream bi;
     }
+
     /**
      *
      * [* 使用 org.apache.tools.zip.ZipFile 解压文件，它与 java 类库中的
@@ -118,8 +120,6 @@ public class ZIPControl
      * @throws FileNotFoundException
      * @throws ZipException
      */
-
-    @SuppressWarnings("unchecked")
     public static void readByApacheZipFile(String archive, String decompressDir)
             throws IOException, FileNotFoundException, ZipException
     {
@@ -165,6 +165,7 @@ public class ZIPControl
         }
         zf.close();
     }
+
     /**
      *
      * [使用 java api 中的 ZipInputStream 类解压文件，但如果压缩时采用了

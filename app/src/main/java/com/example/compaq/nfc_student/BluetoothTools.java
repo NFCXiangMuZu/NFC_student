@@ -1,15 +1,15 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 蓝牙工具类
+ */
+
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
-/**
- * 蓝牙工具类
- * @author liujian
- *
- */
+
 public class BluetoothTools {
 
 	private static BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -17,18 +17,7 @@ public class BluetoothTools {
 	/**
 	 * 本程序所使用的UUID
 	 */
-	//public static final UUID PRIVATE_UUID = UUID.fromString("0f3561b9-bda5-4672-84ff-ab1f98e349b6");
 	public static final UUID PRIVATE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-	/**
-	 * 字符串常量，存放在Intent中的设备对象
-	 */
-	public static final String DEVICE = "DEVICE";
-
-	/**
-	 * 字符串常量，服务器所在设备列表中的位置
-	 */
-	public static final String SERVER_INDEX = "SERVER_INDEX";
 
 	/**
 	 * 字符串常量，Intent中的数据
@@ -39,16 +28,6 @@ public class BluetoothTools {
 	 * Action类型标识符，Action类型 为读到数据
 	 */
 	public static final String ACTION_READ_DATA = "ACTION_READ_DATA";
-
-	/**
-	 * Action类型标识符，Action类型为 搜索结束
-	 */
-	public static final String ACTION_DISCOVERY_FINISHED = "ACTION_DISCOVERY_FINISHED";
-
-	/**
-	 * Action类型标识符，Action类型为 开始搜索设备
-	 */
-	public static final String ACTION_START_DISCOVERY = "ACTION_START_DISCOVERY";
 
 	/**
 	 * Action：设备列表

@@ -1,10 +1,11 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 用于发送文件的服务
+ */
+
 import java.io.IOException;
 import java.io.Serializable;
-
-
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,13 +20,27 @@ import android.os.Message;
 
 public class SendFileService extends Service {
 
+	//蓝牙通信用的socket
 	private BluetoothCommunSocket communSocket;
 	
 	BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
-	
 	BluetoothSocket socket=null;
 	BluetoothDevice device;
-			BroadcastReceiver controlReceiver = new BroadcastReceiver() {
+
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		System.out.println("服务开启");
+		IntentFilter intentfilter=new IntentFilter();
+		intentfilter.addAction(BluetoothTools.ACTION_DATA_TO_SERVICE);
+		registerReceiver(controlReceiver, intentfilter);
+		super.onCreate();
+	}
+
+	/**
+	 * 接收 开始文件发送广播的 广播接收器
+	 */
+	BroadcastReceiver controlReceiver = new BroadcastReceiver() {
 				@Override
 				public void onReceive(Context context, Intent intent) {
 					System.out.println("开始连接");
@@ -50,7 +65,6 @@ public class SendFileService extends Service {
 						class MyRunnable implements Runnable{
 							public void run(){
 								communSocket.write(transmit);
-								System.out.println("======写入成功======");
 							}
 							}
 						Thread t=new Thread(new MyRunnable());
@@ -59,9 +73,11 @@ public class SendFileService extends Service {
 					}
 				}
 			};
-			
-			//接收信息Handler
-			Handler handler = new Handler() {
+
+    /**
+	 * 接收其他线程信息的handler
+	 */
+	Handler handler = new Handler() {
 				@Override
 				public void handleMessage(Message msg) {
 					switch (msg.what) {
@@ -70,14 +86,12 @@ public class SendFileService extends Service {
 						Intent errorIntent = new Intent(BluetoothTools.ACTION_CONNECT_ERROR);
 						sendBroadcast(errorIntent);
 						break;
-					case BluetoothTools.MESSAGE_CONNECT_SUCCESS://���ӳɹ�			
+					case BluetoothTools.MESSAGE_CONNECT_SUCCESS:
 						//连接成功
-					//	communSocket = new BluetoothCommunSocket(handler, (BluetoothSocket)msg.obj);
-					//	communSocket.start();
-//						Intent succIntent = new Intent(BluetoothTools.ACTION_CONNECT_SUCCESS);
-//						sendBroadcast(succIntent);
+						Intent succIntent = new Intent(BluetoothTools.ACTION_CONNECT_SUCCESS);
+						sendBroadcast(succIntent);
 						break;
-					case BluetoothTools.MESSAGE_READ_OBJECT://��ȡ������
+					case BluetoothTools.MESSAGE_READ_OBJECT:
 						//信息读取成功
 						Intent dataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_GAME);
 						dataIntent.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
@@ -97,32 +111,12 @@ public class SendFileService extends Service {
 						break;
 					case BluetoothTools.FILE_SEND_SUCCESS:
 						//文件发送成功
-						System.out.println("====+++++====文件发送成功===++++=====");
-						//unregisterReceiver(controlReceiver);
 						Intent file_send_success_Intent = new Intent(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
 						sendBroadcast(file_send_success_Intent);
 					}
 					super.handleMessage(msg);
 				}
 			};
-	
-	
-	
-	
-	
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		System.out.println("服务开启");
-		IntentFilter intentfilter=new IntentFilter();
-		intentfilter.addAction(BluetoothTools.ACTION_DATA_TO_SERVICE);
-		registerReceiver(controlReceiver, intentfilter);
-		super.onCreate();
-	}
-
-
-
-
 
 	@Override
 	public void onDestroy() {
@@ -130,8 +124,6 @@ public class SendFileService extends Service {
 		unregisterReceiver(controlReceiver);
 		super.onDestroy();
 	}
-
-
 
 	@Override
 	public IBinder onBind(Intent arg0) {

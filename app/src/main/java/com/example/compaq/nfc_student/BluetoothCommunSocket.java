@@ -43,6 +43,10 @@ public class BluetoothCommunSocket {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * 关闭连接
+	 */
 	public void close(){
 		if (inStream != null) {
 			try {
@@ -83,7 +87,6 @@ public class BluetoothCommunSocket {
 				FileInputStream fins=new FileInputStream(transmit_s.getFilepath());
 				long fileDataLen = fins.available(); //文件的总长度
 				int f_len=filename.getBytes("GBK").length; //文件名长度
-
 				byte[] data=new byte[f_len];
 				data=filename.getBytes("GBK");
 				long totalLen = 4+1+1+f_len+fileDataLen;//数据的总长度
@@ -107,14 +110,13 @@ public class BluetoothCommunSocket {
 						outStream.write(buffer, 0, size);
 						outStream.flush();
 						sendlen+=size;
-						StaticValue.file_send_percent = (int)sendlen/(1024*1024);
+						StaticValue.file_send_percent = (int)sendlen/(1024*1024);//记录已传输的文件字节长度
 						Log.v("调试" , "fileDataLen:"+fileDataLen);
 						i++;
 						if(i%5==0){
 							long time2=Calendar.getInstance().getTimeInMillis();
 							tspeed=sendlen/(time2-time1)*1000/1024;
 						}
-						//	Log.v("调试" ,"tspeed："+tspeed);
 						downbl = ((sendlen * 100) / fileDataLen);
 						TransmitBean up = new TransmitBean();
 						up.setUppercent(String.valueOf(downbl));
@@ -124,15 +126,20 @@ public class BluetoothCommunSocket {
 						}else{
 							up.setShowflag(false);
 						}
+						//提示正在发送的消息
 						Message msg = serviceHandler.obtainMessage();
 						msg.what = BluetoothTools.FILE_SEND_PERCENT;
 						msg.obj = up;
 						msg.sendToTarget();
 					}
+					//计算发送时间
 					long time2=Calendar.getInstance().getTimeInMillis();
 					StaticValue.file_send_time = (double)(time2-time1)/1000;
+					//关闭文件读入流
 					fins.close();
+
 					Log.v("调试" , "文件发送完成");
+					//文件发送成功的消息
 					Message msg = serviceHandler.obtainMessage();
 					msg.what = BluetoothTools.FILE_SEND_SUCCESS;
 					msg.sendToTarget();
@@ -142,28 +149,6 @@ public class BluetoothCommunSocket {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}else{
-				Log.v("调试" , "type:"+1);
-				byte type = 1; //类型为1，即传文本消息
-				String msg=transmit_s.getMsg();
-				int f_len=msg.getBytes("GBK").length; //消息长度
-				long totalLen = 4+1+1+f_len;//数据的总长度
-				byte[] data=new byte[f_len];
-				data=msg.getBytes("GBK");
-				outStream.writeLong(totalLen); //1.写入数据的总长度
-				outStream.writeByte(type);//2.写入类型
-				outStream.writeByte(f_len); //3.写入消息的长度
-				outStream.write(data);    //4.写入消息数据
-				outStream.flush();
-			}
-
-			this.read();
-
-			byte[] ef = new byte[3];
-			inStream.read(ef);//读取消息
-			String eof = new String(ef);
-			if("EOF".equals(eof)){
-				Log.v("调试" ,"接收EOF");
 			}
 		}catch (Exception ex) {
 			Log.v("调试" , "通讯中断Exception:");
@@ -176,7 +161,10 @@ public class BluetoothCommunSocket {
 		}
 	}
 
-
+	/**
+	 * 读取流
+	 * @throws IOException
+     */
 	public void read() throws IOException{
 		TransmitBean transmit_r = new TransmitBean();
 		long totalLen = inStream.readLong();//总长度

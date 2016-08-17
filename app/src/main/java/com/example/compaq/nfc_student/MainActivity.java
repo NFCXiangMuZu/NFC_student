@@ -1,17 +1,16 @@
 package com.example.compaq.nfc_student;
-import android.content.Context;
-import android.net.Uri;
+
+/**
+ * 学生端主界面实现
+ */
+
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -21,20 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.nfc_student.R;
-
-import java.util.Vector;
 
 public class MainActivity extends Activity {
 
@@ -45,16 +36,17 @@ public class MainActivity extends Activity {
 	Button Middle_Attendence_button;
 	TextView NavigationBar_title;
 
-	//popupwindow
+	//身份信息绑定弹出窗口
 	Button sign_in_window_close_button;
 	EditText sign_in_window_xuehao_edittext;
 	EditText sign_in_window_name_edittext;
 	Button sign_in_window_confirm_button;
-
-	PopupMenu folder_menu = null;
 	PopupWindow sign_in_window = null;
 
-	@SuppressLint("NewApi")
+	//折叠菜单对象
+	PopupMenu folder_menu = null;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,16 +56,14 @@ public class MainActivity extends Activity {
 		//初始化layout
 		init_layout();
 
-		//建立软件文件暂存文件夹
+		//建立文件暂存文件夹
 		FileHelper.mkDir(StaticValue.SDPATH+"/NFC-课堂点名/");
 
-		//获取手机唯一的IMEI号
-		TelephonyManager TelephonyMgr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
-		String szImei = TelephonyMgr.getDeviceId();
-		System.out.println("IMEI为："+szImei);
 	}
 
-	//初始化layout
+	/**
+	 * 初始化layout
+	 */
 	private void init_layout(){
 
 		NavigationBar_title = (TextView)findViewById(R.id.navigationbar_title);
@@ -89,7 +79,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	//绑定身份信息窗口
+	//绑定身份信息弹出窗口
 	private void show_sign_in_window(){
 
 		View contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popupwindows_layout, null);
@@ -97,7 +87,7 @@ public class MainActivity extends Activity {
 		sign_in_window = new PopupWindow(contentView,600, 450);
 		sign_in_window.setFocusable(true);
 
-		//初始化layout
+		//初始化窗口中的layout元素
 		sign_in_window_close_button = (Button)contentView.findViewById(R.id.sign_in_window_close_button);
 		sign_in_window_xuehao_edittext = (EditText)contentView.findViewById(R.id.sign_in_window_xuehao_edit);
 		sign_in_window_name_edittext = (EditText)contentView.findViewById(R.id.sign_in_window_name_edit);
@@ -106,13 +96,15 @@ public class MainActivity extends Activity {
 		sign_in_window_close_button.setOnClickListener(new listener());
 		sign_in_window_confirm_button.setOnClickListener(new listener());
 
-		//显示PopupWindow
+		//显示窗口
 		View rootview = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
 		sign_in_window.showAtLocation(rootview, Gravity.CENTER, 0, 0);
 
 	}
 
-	//总按钮监听器
+	/**
+	 * 按钮动作总监听器
+	 */
 	class listener implements View.OnClickListener{
 
 		@Override
@@ -120,7 +112,7 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			switch(arg0.getId()){
 
-				case R.id.navigationbar_folderbutton:
+				case R.id.navigationbar_folderbutton://点击右上角折叠按钮
 
 					folder_menu = new PopupMenu(MainActivity.this,NavigationBar_folderbutton);
 					//加载menu资源
@@ -141,61 +133,44 @@ public class MainActivity extends Activity {
 
 						}
 					});
-
 					folder_menu.show();
 
 					break;
 
-				case R.id.navigationbar_leftbutton:
+				case R.id.navigationbar_leftbutton://点击左上角身份绑定按钮
 					show_sign_in_window();
 					break;
-				case R.id.normal_attendence_button:
-					Intent intent_normal=new Intent();
-					intent_normal.setClass(MainActivity.this,NormalAttendence.class );
-					MainActivity.this.startActivity(intent_normal);
-					break;
-				case R.id.middle_attendence_button:
-					Intent intent_middleAttendence=new Intent();
-					intent_middleAttendence.setClass(MainActivity.this,MiddleAttendence.class );
-					MainActivity.this.startActivity(intent_middleAttendence);
-					finish();
-					break;
-				case R.id.sign_in_window_close_button:
+				//身份绑定弹出窗口中的按钮
+				case R.id.sign_in_window_close_button://身份绑定窗口关闭按钮
 					sign_in_window.dismiss();
 					break;
-				case R.id.sign_in_window_confirm_button:
-
+				case R.id.sign_in_window_confirm_button://身份绑定窗口中的确认按钮
+					//首先检查用户输入是否为空
 					if(TextUtils.isEmpty(sign_in_window_xuehao_edittext.getText().toString().trim())
 							||TextUtils.isEmpty(sign_in_window_name_edittext.getText().toString().trim())){
-						//Toast.makeText(this,"学号或姓名不能为空",Toast.LENGTH_SHORT).show();
 						AlertDialog.Builder alertdialog=new AlertDialog.Builder(MainActivity.this);
 						alertdialog.setTitle("输入不允许为空");
-						//alertdialog.setNegativeButton("取消", null);
 						alertdialog.setPositiveButton("重新输入", null);
 						alertdialog.show();
 						return;
 					}
+					//实现延迟解绑机制
 					if(StaticValue.bind_mark==1||StaticValue.start_mark==0){
 
 						//启动计时服务
 						startService(new Intent(MainActivity.this,TimeService.class));
-
 						AlertDialog.Builder alertdialog_button=new AlertDialog.Builder(MainActivity.this);
 						alertdialog_button.setTitle("确认绑定后两小时不能解绑\n是否绑定？");
 						alertdialog_button.setNegativeButton("再检查一下", null);
 						alertdialog_button.setPositiveButton("确认绑定", new DialogInterface.OnClickListener(){
-
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
 								// TODO Auto-generated method stub
 								StaticValue.start_mark=1;
 								StaticValue.bind_mark=0;
-								System.out.println("start_mark="+StaticValue.start_mark);
-								System.out.println("bind_mark="+StaticValue.bind_mark);
+								//学生身份信息绑定
 								StaticValue.setnumber = sign_in_window_xuehao_edittext.getText().toString().trim();
 								StaticValue.setname = sign_in_window_name_edittext.getText().toString().trim();
-								System.out.println("+++++++"+StaticValue.setnumber);
-								System.out.println("+++++++"+StaticValue.setname);
 								NavigationBar_leftbutton.setText(StaticValue.setname);
 							}
 
@@ -208,9 +183,18 @@ public class MainActivity extends Activity {
 						alertdialog_button.setTitle("请稍后绑定");
 						alertdialog_button.setPositiveButton("好的",null);
 						alertdialog_button.show();
-
 					}
-
+					break;
+				case R.id.normal_attendence_button://点击正常签到按钮
+					Intent intent_normal=new Intent();
+					intent_normal.setClass(MainActivity.this,NormalAttendence.class );
+					MainActivity.this.startActivity(intent_normal);
+					break;
+				case R.id.middle_attendence_button://点击点名中继按钮
+					Intent intent_middleAttendence=new Intent();
+					intent_middleAttendence.setClass(MainActivity.this,MiddleAttendence.class );
+					MainActivity.this.startActivity(intent_middleAttendence);
+					finish();
 					break;
 				default:
 					break;
@@ -218,8 +202,6 @@ public class MainActivity extends Activity {
 		}
 
 	}
-
-
 
 	@Override
 	protected void onRestart() {
@@ -256,16 +238,6 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		menu.add(0, 1, 1, R.string.exit);
-		menu.add(0, 2, 2, R.string.about);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

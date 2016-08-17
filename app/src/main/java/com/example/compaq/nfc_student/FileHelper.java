@@ -1,59 +1,49 @@
 package com.example.compaq.nfc_student;
+
 /**
- * @Title: FileHelper.java
- * @Package com.tes.textsd
- * @Description: TODO(用一句话描述该文件做什么)
- * @author Alex.Z
- * @date 2013-2-26 下午5:45:40
- * @version V1.0
+ * 文件相关操作集合类
  */
-
-import android.content.ContentResolver;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
-
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.provider.MediaStore.Files.FileColumns;
-import static android.provider.MediaStore.Files.getContentUri;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
+import static android.provider.MediaStore.Files.*;
 
 public class FileHelper {
 	private Context context;
 	/** SD卡是否存在**/
 	private boolean hasSD = false;
-/** SD卡的路径**/
-//private String SDPATH;
 	/** 当前程序包的路径**/
 	private String FILESPATH;
+
 	public FileHelper(Context context) {
 		this.context = context;
 		hasSD = Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED);
-//SDPATH = Environment.getExternalStorageDirectory().getPath();
+				android.os.Environment.MEDIA_MOUNTED);
 		FILESPATH = this.context.getFilesDir().getPath();
 	}
+
 	/**
 	 * 在SD卡上创建文件
-	 *
 	 * @throws IOException
 	 */
 	public static File createSDFile(String fileName) throws IOException {
@@ -63,9 +53,9 @@ public class FileHelper {
 		}
 		return file;
 	}
+
 	/**
 	 * 删除SD卡上的文件
-	 *
 	 * @param fileName
 	 */
 	public static boolean deleteSDFile(String fileName) {
@@ -74,6 +64,7 @@ public class FileHelper {
 			return false;
 		return file.delete();
 	}
+
 	/**
 	 * 写入内容到SD卡中的txt文本中
 	 * str为内容
@@ -92,9 +83,9 @@ public class FileHelper {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * 读取SD卡中文本文件
-	 *
 	 * @param fileName
 	 * @return
 	 */
@@ -123,11 +114,9 @@ public class FileHelper {
 
 	/**
 	 * 删除SD卡中文本文件的某一行内容
-	 *
 	 * @param fileName
 	 * @return
 	 */
-
 	public static List<String> Delete_oneFile(String fileName,int del_num) {
 
 		List<String> list=new ArrayList<String>();
@@ -157,6 +146,11 @@ public class FileHelper {
 		return list;
 	}
 
+	/**
+	 * 创建新的文件目录
+	 * @param path 要创建的文件目录
+	 * @return
+	 */
 	public static boolean mkDir(String path) {
 		File dir = new File(path);
 		boolean res = dir.mkdirs();
@@ -164,6 +158,12 @@ public class FileHelper {
 		return res;
 	}
 
+	/**
+	 * 复制文件操作
+	 * @param fromFile 文件传输源目录
+	 * @param toFile 文件传输目的目录
+	 * @return
+	 */
 	public static boolean CopyFile(String fromFile, String toFile) {
 		try {
 			InputStream fosfrom = new FileInputStream(fromFile);
@@ -183,25 +183,11 @@ public class FileHelper {
 		}
 	}
 
-	public static boolean CopyAssetFile(Context ctx, String fromFile, String toFile) {
-		try {
-			InputStream fosfrom = ctx.getAssets().open(fromFile);
-			OutputStream fosto = new FileOutputStream(toFile);
-			byte bt[] = new byte[4096];
-			int c;
-			while ((c = fosfrom.read(bt)) > 0) {
-				fosto.write(bt, 0, c);
-			}
-			fosfrom.close();
-			fosto.close();
-			bt = null;
-			return true;
-
-		} catch (Exception ex) {
-			return false;
-		}
-	}
-
+	/**
+	 * 删除文件
+	 * @param path 被删除文件目录
+	 * @return
+	 */
 	public static boolean deleteFile(String path) {
 		try {
 			File file = new File(path);
@@ -254,7 +240,7 @@ public class FileHelper {
 	/**
 	 * 获取特定格式文件
 	 * @return
-     */
+	 */
 	public static List<String> getSpecificTypeOfFile(Context context,String[] extension)
 	{
 
@@ -296,17 +282,5 @@ public class FileHelper {
 		cursor.close();
 		return file_list;
 
-	}
-
-
-
-	public String getFILESPATH() {
-		return FILESPATH;
-	}
-	public String getSDPATH() {
-		return StaticValue.SDPATH;
-	}
-	public boolean hasSD() {
-		return hasSD;
 	}
 } 

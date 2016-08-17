@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 蓝牙通信所用数据类
+ */
+
 import java.io.Serializable;
 public class TransmitBean implements Serializable{
 
@@ -11,7 +15,6 @@ public class TransmitBean implements Serializable{
 	private String tspeed = "";
 	private boolean showflag ;
 	private byte[] file ;
-//	private  BluetoothCommunThread communThread;	
 	
 	
 	public void setMsg(String msg) {
@@ -70,15 +73,5 @@ public class TransmitBean implements Serializable{
 		this.showflag = showflag;
 	}
 
-	
-//	public BluetoothCommunThread getCommunThread() {
-//		return communThread;
-//	}
-//
-//	public void setCommunThread(BluetoothCommunThread communThread) {
-//		this.communThread = communThread;
-//	}
-	
-	
 }
 

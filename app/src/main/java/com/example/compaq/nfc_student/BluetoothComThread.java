@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 蓝牙通信线程
+ */
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,24 +11,16 @@ import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
 import java.util.Calendar;
-
 import android.bluetooth.BluetoothSocket;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-/**
- * 蓝牙通讯线程
- * @author liujian
- *
- */
 public class BluetoothComThread extends Thread {
 	private Handler serviceHandler;		//与Service通信的Handler
 	public BluetoothSocket socket;
 	public DataInputStream inStream;		//对象输入流
 	public DataOutputStream outStream;	//对象输出流
-	//	public volatile boolean isRun = true;	//运行标志位
 	private long downbl;
 
 	public void close(){
@@ -76,6 +72,9 @@ public class BluetoothComThread extends Thread {
 		}
 	}
 
+	/**
+	 * 文件接收线程
+	 */
 	@Override
 	public void run() {
 		try {
@@ -83,24 +82,6 @@ public class BluetoothComThread extends Thread {
 			TransmitBean transmit = new TransmitBean();
 			long totalLen = inStream.readLong();//总长度
 			byte type = inStream.readByte();//类型
-			if(type==1){//文本类型
-				try {
-					byte len = inStream.readByte();//消息长度
-					byte[] ml = new byte[len];
-					int size=0;
-					int receivelen=0;
-					while (receivelen <len){
-						size=inStream.read(ml,0,ml.length);
-						receivelen+=size;
-					}
-					String msg = new String(ml,"GBK");
-					Log.v("调试" , "msg:"+msg);
-					transmit.setMsg(msg);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(type==2){//文件类型
 				try {
 					byte len = inStream.readByte();//文件名长度
 					byte[] fn = new byte[len];
@@ -109,9 +90,8 @@ public class BluetoothComThread extends Thread {
 					Log.v("调试" , "filename:"+filename);
 					transmit.setFilename(filename);
 					long  datalength = totalLen-1-4-1-fn.length;//文件数据
-					StaticValue.file_send_length = (int)datalength/(1024*1024);
+					StaticValue.file_send_length = (int)datalength/(1024*1024);//获取发送文件的总长度
 					String savePath = StaticValue.save_file_path + transmit.getFilename();
-					StaticValue.filename_for_middle=savePath;
 					transmit.setFilepath(savePath);
 					FileOutputStream file=new FileOutputStream(savePath, false);
 					byte[] buffer = new byte[1024*1024];
@@ -153,30 +133,11 @@ public class BluetoothComThread extends Thread {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-			//发送成功读取到对象的消息，消息的obj参数为读取到的对象
-			Message msg = serviceHandler.obtainMessage();
-			msg.what = BluetoothTools.MESSAGE_READ_OBJECT;
-			msg.obj = transmit;
-			msg.sendToTarget();
-
+            //发送文件接收成功的消息
 			Message msg_success = serviceHandler.obtainMessage();
 			msg_success.what = BluetoothTools.FILE_RECEIVE_SUCCESS;
 			msg_success.obj=transmit;
 			msg_success.sendToTarget();
-
-			TransmitBean transmit_s = new TransmitBean();
-			if(type==1){
-//				transmit_s.setFilename("mu.zip");
-//				transmit_s.setFilepath(Environment.getExternalStorageDirectory().getPath() + "/" + "mu.zip");
-
-				//此处如果需要显示发送进度，则需要在Runnable中调用write。
-				transmit_s.setMsg("如有需要发送文件");
-				write(transmit_s);
-			}else{
-				transmit_s.setMsg("收到文件");
-				write(transmit_s);
-			}
 
 			String endflag = "EOF";
 			outStream.write(endflag.getBytes());    //发送报文通知客户端关闭SOCKET
@@ -250,8 +211,13 @@ public class BluetoothComThread extends Thread {
 						msg.obj = up;
 						msg.sendToTarget();
 					}
+					long time2=Calendar.getInstance().getTimeInMillis();
+					StaticValue.file_send_time = (double)(time2-time1)/1000;
 					fins.close();
-					Log.v("调试" , "文件发送完成");
+					Log.v("调试" , "文件发送完成啦！！");
+					Message msg = serviceHandler.obtainMessage();
+					msg.what = BluetoothTools.FILE_SEND_SUCCESS;
+					msg.sendToTarget();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

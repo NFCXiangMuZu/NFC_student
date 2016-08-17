@@ -1,12 +1,13 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 点名中继功能实现
+ */
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -26,23 +27,18 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.nfc_student.R;
 
-@SuppressLint("NewApi")
 public class MiddleAttendence extends Activity implements CreateNdefMessageCallback,OnNdefPushCompleteCallback{
 
 	private static final int MESSAGE_SENT = 0;
@@ -55,14 +51,14 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 	//显示文件传输进度
 	ProgressDialog file_send_dialog;
 
+	//layout元素
 	Button middle_attendence_NB_leftbutton;
 	Button  middle_attendence_NB_rightbutton;
 	ListView middle_attendence_listview;
 
+	//存储已经拍卡的学生信息，需要发送到教师端处
 	public List<String> list=new ArrayList<String>();
 
-
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -73,14 +69,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		//初始化layout
 		init_layout();
 
-		//初始化list
-		/*
-		list.add(StaticValue.macaddress);
-		list.add(StaticValue.setname);
-		list.add(StaticValue.setnumber);
-		list.add(StaticValue.reflect_information);
-		*/
-
 		nfcadapter=NfcAdapter.getDefaultAdapter(this);
 		pendingintent=PendingIntent.getActivity(this, 0,
 				new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -88,12 +76,13 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		nfcadapter.setNdefPushMessageCallback(this, this);
 		nfcadapter.setOnNdefPushCompleteCallback(this, this);
 
-		//注册接收发送成功信息的广播
+		//注册接收文件发送信息的广播
 		IntentFilter intentfilter=new IntentFilter();
 		intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
 		intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_PERCENT);
 		registerReceiver(receiver, intentfilter);
 
+		//启动接收开始文件发送广播的服务
 		MiddleAttendence.this.startService(new Intent(MiddleAttendence.this,SendFileService.class));
 
 	}
@@ -106,7 +95,9 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		super.onDestroy();
 	}
 
-	//初始化layout
+	/**
+	 * 初始化layout
+	 */
 	private void init_layout(){
 
 		middle_attendence_NB_leftbutton = (Button)findViewById(R.id.middle_attendence_leftbutton);
@@ -118,7 +109,9 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 	}
 
-	//按钮监听器
+	/**
+	 * 按钮监听器
+	 */
 	class listener implements View.OnClickListener{
 
 		@Override
@@ -126,7 +119,7 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			// TODO Auto-generated method stub
 			switch (arg0.getId()) {
 
-				case R.id.middle_attendence_leftbutton:
+				case R.id.middle_attendence_leftbutton://点击返回按钮
 					Intent intent_back=new Intent();
 					intent_back.setClass(MiddleAttendence.this,MainActivity.class);
 					MiddleAttendence.this.startActivity(intent_back);
@@ -140,14 +133,13 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 	}
 
+	//接收NFC信息传输结果的handler
 	private final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MESSAGE_SENT:
-					//Toast.makeText(getApplicationContext(), "传输成功", Toast.LENGTH_LONG).show();
 					//弹出框定义
-
 					AlertDialog.Builder alertdialog=new AlertDialog.Builder(MiddleAttendence.this);
 					if(StaticValue.status==1){
 						alertdialog.setTitle("                 签到完成");
@@ -183,7 +175,11 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 	}
 
-
+	/**
+	 * 创建通过拍卡传输到教师端的NdefMessage
+	 * @param arg0
+	 * @return
+     */
 	@Override
 	public NdefMessage createNdefMessage(NfcEvent arg0) {
 		// TODO Auto-generated method stub
@@ -197,9 +193,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		return msg;
 	}
 
-
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -214,8 +207,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
-	@SuppressLint("NewApi")
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -226,7 +217,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		}
 	}
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
@@ -244,61 +234,49 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		}
 	}
 
-
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		Toast.makeText(getApplicationContext(), "回到主页", Toast.LENGTH_LONG).show();
-		Intent intent=new Intent();
-		intent.setClass(MiddleAttendence.this,MainActivity.class);
-		MiddleAttendence.this.startActivity(intent);
-		finish();
-		return super.onKeyDown(keyCode, event);
-	}
-
-	//新建一个record
-	@SuppressLint("NewApi")
+	/**
+	 * 从字符串新建一个NdefRecord
+	 * @param text
+	 * @return
+	 * @throws UnsupportedEncodingException
+     */
 	private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
 
 		System.out.println("----createRecord----");
-
-		// String nameVcard = "BEGIN:VCARD" +"\n"+ "VERSION:2.1" +"\n" + "N:;" + "\n" +"ORG: PlanAyala"+"\n"+ "TEL;HOME:6302421" +"\n"+ "END:VCARD";
 		String nameVcard = text;
 		byte[] uriField = nameVcard.getBytes();
 		byte[] payload = new byte[uriField.length + 1];              //add 1 for the URI Prefix
-		//payload[0] = 0x01;                                      //prefixes http://www. to the URI
 		System.arraycopy(uriField, 0, payload, 1, uriField.length);  //appends URI to payload
-
 		NdefRecord nfcRecord = new NdefRecord(
 				NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
-
-
 		return nfcRecord;
 	}
 
-	@SuppressLint("NewApi")
+	/**
+	 * 获取一个NdefMessage
+	 * @return
+	 * @throws UnsupportedEncodingException
+     */
 	private NdefMessage getNoteAsNdef() throws UnsupportedEncodingException {
 		System.out.println("----getNoteAsNdef----");
-
 		NdefRecord[] list_record=new NdefRecord[list.size()];
-
 		if (StaticValue.setname.equals("")) {
 			return null;
 		} else {
 			for(int i=0;i<list.size();i++){
 				list_record[i]=createRecord(list.get(i).toString());
-
-				//System.out.println("结果"+(i+1)+"为："+list.get(i).toString());
 			}
-
-			//System.out.println("要写入的text是："+getText(textRecord.getPayload()));
 			return new NdefMessage(list_record);
 		}
 
 	}
 
-	@SuppressLint("NewApi")
+	/**
+	 * 处理通过拍卡接收到的NdefMessage
+	 * @param intent
+	 * @throws UnsupportedEncodingException
+	 * @throws FormatException
+     */
 	protected void resolveIntent(Intent intent) throws UnsupportedEncodingException, FormatException {
 		// 得到是否TAG触发
 		System.out.println("----resolveIntent----");
@@ -306,20 +284,15 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 				|| NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
 				|| NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
 		{
-			//autowrite(intent);
-			// 处理该intent
-			//Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			Parcelable[] rawMsgs =
 					intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 			// only one message sent during the beam
 			NdefMessage msg = (NdefMessage)rawMsgs[0];
-			// 获取id数组
-			//byte[] bytesId = tag.getId();
-			System.out.println("自动写入成功");
 			String result_macaddress = new String(msg.getRecords()[0].getPayload(), "GBK").substring(1);
 			String result_strname=new String(msg.getRecords()[1].getPayload(),"UTF-8");
 			String result_strxuehao=new String(msg.getRecords()[2].getPayload(),"UTF-8").substring(1,11);
 			String result_strreflect_infor=new String(msg.getRecords()[3].getPayload(),"UTF-8");
+			//将获取的学生信息插入到list数组中
 			list.add(result_macaddress);
 			list.add(result_strname);
 			list.add(result_strxuehao);
@@ -330,7 +303,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			for(int i=0;i<list.size();i+=4){
 
 				HashMap<String,Object> map = new HashMap<String,Object>();
-				//map.put("middle_attendence_listview_image_item",R.drawable.wechat4);
 				map.put("middle_attendence_listview_xuehao_item",list.get(i+1));
 				map.put("middle_attendence_listview_name_item",list.get(i+2));
 				listitem.add(map);
@@ -346,26 +318,22 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 
 			middle_attendence_listview.setAdapter(listitemadapter);
 
-
-			System.out.println("+++++++++" + result_macaddress);
+			//连接蓝牙
 			StaticValue.remote_macaddress = result_macaddress;
-			//Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
 			bluetoothDevice = bluetoothAdapter.getRemoteDevice(result_macaddress);
 			if (bluetoothDevice != null) {
 				System.out.println("==获取成功==");
-				System.out.println("地址是：" + bluetoothDevice.getName());
 			}
 			try {
 				ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
 				ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
 				ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
 				System.out.println("配对成功！！");
-				//ClsUtils.pair(result_macaddress, "0000");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//System.out.println("地址是："+bluetoothDevice.getName());
+			//判断是否有文件需要发送
 			if (StaticValue.filename_for_middle != null) {
 				Thread thead = new sendThread();
 				thead.start();
@@ -375,8 +343,6 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 				file_send_dialog.setTitle("文件发送中");
 				file_send_dialog.setCancelable(true);
 				file_send_dialog.show();
-				System.out.println("文件目录为："+StaticValue.filename_for_middle);
-				System.out.println("连接线程启动成功！！");
 			} else {
 				System.out.println("无文件可发！！");
 			}
@@ -384,12 +350,12 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 		}
 	}
 
+	/**
+	 * 发送 开始文件发送 广播的线程
+	 */
 	private class sendThread extends Thread {
 
-		public sendThread(){
-
-
-		}
+		public sendThread(){}
 
 		public void run() {
 
@@ -402,35 +368,25 @@ public class MiddleAttendence extends Activity implements CreateNdefMessageCallb
 			sendDataIntent.putExtra(BluetoothTools.DATA, transmit);
 			sendBroadcast(sendDataIntent);
 
-			System.out.println("广播成功！！！！");
 		}
 	}
 
-
+	/**
+	 * 接收文件发送过程信息的广播接收器
+	 */
 	BroadcastReceiver receiver=new BroadcastReceiver() {
-
 		@Override
 		public void onReceive(Context arg0, Intent arg1) {
-
 			// TODO Auto-generated method stub
-
-			System.out.println("文件传输成功！！");
 			String action = arg1.getAction();
-			if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
+			if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {//文件传输成功
 				file_send_dialog.cancel();
-				Toast.makeText(MiddleAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
-			}else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
-
-				System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
+				Toast.makeText(MiddleAttendence.this, "文件发送成功！", Toast.LENGTH_LONG).show();
+			}else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){//文件传输过程
 				file_send_dialog.setMax(StaticValue.file_send_length);
 				file_send_dialog.setProgress(StaticValue.file_send_percent);
-				System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
-
-
 			}
 
 		}
 	};
-
-
 }

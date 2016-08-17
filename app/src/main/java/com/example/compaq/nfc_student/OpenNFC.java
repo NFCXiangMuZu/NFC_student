@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 用于开启NFC的工具类
+ */
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +26,6 @@ public class OpenNFC {
 
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
-
 					}
 				}).create().show();
 	}
