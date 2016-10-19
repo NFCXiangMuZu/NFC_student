@@ -17,7 +17,7 @@
             android:layout_height="50dp"
             android:id="@+id/middle_attendence_leftbutton"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/left_button"
+            android:background="@drawable/left_button_low"
             android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
             />
@@ -37,7 +37,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:id="@+id/middle_attendence_rightbutton"
-            android:background="@drawable/folder_touming2"
+            android:background="@drawable/folder_touming2_low"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"

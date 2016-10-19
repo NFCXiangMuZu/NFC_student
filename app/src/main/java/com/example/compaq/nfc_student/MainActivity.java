@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -84,7 +85,10 @@ public class MainActivity extends Activity {
 
 		View contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popupwindows_layout, null);
 		//sign_in_window = new PopupWindow(contentView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-		sign_in_window = new PopupWindow(contentView,600, 450);
+		//获取屏幕大小
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		sign_in_window = new PopupWindow(contentView,dm.widthPixels/2,dm.heightPixels/3);
 		sign_in_window.setFocusable(true);
 
 		//初始化窗口中的layout元素

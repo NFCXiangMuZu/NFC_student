@@ -17,7 +17,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/close_button"
+            android:background="@drawable/close_button_low"
             android:layout_marginRight="5dp"
             android:layout_centerVertical="true"
             android:id="@+id/normal_attendence_window_close_button"

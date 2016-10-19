@@ -29,6 +29,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -128,7 +129,9 @@ public class NormalAttendence extends Activity implements CreateNdefMessageCallb
 	private void show_normal_attendence_window(){
 
 		View contentView = LayoutInflater.from(NormalAttendence.this).inflate(R.layout.normal_attendence_window, null);
-		normal_attendence_window = new PopupWindow(contentView,600, 550);
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		normal_attendence_window = new PopupWindow(contentView,dm.widthPixels*2/3,dm.heightPixels*2/5);
 		normal_attendence_window.setFocusable(true);
 
 		//初始化layout

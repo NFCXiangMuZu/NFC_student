@@ -43,4 +43,7 @@ public class StaticValue {
 	public static double file_send_time = 0.0;
 
 	public static String SDPATH = Environment.getExternalStorageDirectory().getPath();
+
+	//正在接受文件的学生数目
+	public static int receive_file_student_num = 0;
 }
