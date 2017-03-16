@@ -13,7 +13,7 @@ public class OpenNFC {
 	public OpenNFC(final Context c) {
 		new AlertDialog.Builder(c)
 				.setTitle("提示")
-				.setMessage("是否开启nfc?")
+				.setMessage("是否开启nfc呢?")
 				.setNegativeButton("是", new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
