@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/normal_attendence_window"
+    android:background="#fff"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#fff"
+        android:layout_alignParentTop="true"
+        android:id="@+id/normal_attendence_window_NB"
+        >
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/close_button_low"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/normal_attendence_window_close_button"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/normal_attendence_window_NB_title"
+            android:text="已绑定身份信息"
+            android:textSize="10pt"
+            android:textColor="#2d7fb9"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/normal_attendence_window_NB"
+        android:id="@+id/normal_attendence_window_xuehao"
+        android:layout_marginTop="10dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/normal_attendence_window_xuehao_text"
+            android:layout_marginTop="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="7pt"
+            android:text="学号:"
+            />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_toRightOf="@id/normal_attendence_window_xuehao_text"
+            android:id="@+id/normal_attendence_window_xuehao_edit"
+            android:maxLength="15"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/normal_attendence_window_name"
+        android:layout_below="@id/normal_attendence_window_xuehao"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/normal_attendence_window_name_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="7pt"
+            android:text="姓名:"
+            />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/normal_attendence_window_name_text"
+            android:id="@+id/normal_attendence_window_name_edit"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/normal_attendence_window_reflect_infor"
+        android:layout_below="@id/normal_attendence_window_name"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/normal_attendence_window_reflect_infor_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="7pt"
+            android:text="反馈信息:"
+            />
+
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/normal_attendence_window_reflect_infor_text"
+            android:id="@+id/normal_attendence_window_reflect_infor_edit"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/normal_attendence_window_confirm_button"
+        android:background="#2d7fb9"
+        android:text="确认"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:layout_below="@id/normal_attendence_window_reflect_infor"
+        android:layout_margin="10dp"
+        />
+
+
+
+</RelativeLayout>

@@ -1,17 +1,62 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/set_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="center"
-    android:orientation="vertical"
+    android:background="@drawable/background1"
+
     >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="300sp" 
-        android:gravity="center"
-        android:textSize="30sp"
-         />
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="60dp"
+       android:id="@+id/normal_attendence_NB"
+       android:background="#fff"
+       >
 
-</LinearLayout>
+       <Button
+           android:layout_width="50dp"
+           android:layout_height="50dp"
+           android:id="@+id/normal_attendence_NB_backbutton"
+           android:layout_alignParentLeft="true"
+           android:background="@drawable/left_button_low"
+           android:layout_marginLeft="10dp"
+           android:layout_centerVertical="true"
+           />
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/normal_attendence_NB_title"
+           android:layout_centerInParent="true"
+           android:textColor="#000"
+           android:textSize="8pt"
+           android:text="签到"
+
+           />
+
+       <Button
+           android:layout_width="20dp"
+           android:layout_height="20dp"
+           android:id="@+id/normal_attendence_NB_folderbutton"
+           android:background="@drawable/folder_touming2_low"
+           android:layout_alignParentRight="true"
+           android:layout_centerVertical="true"
+           android:layout_marginRight="10dp"
+           />
+
+   </RelativeLayout>
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/normal_attendence_centerbutton"
+        android:background="@drawable/normal_attendence_button_low"
+        android:layout_centerInParent="true"
+        android:text="请登录"
+        android:textColor="#fff"
+        android:textSize="18pt"
+        />
+
+
+
+</RelativeLayout>

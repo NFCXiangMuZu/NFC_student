@@ -1,20 +1,16 @@
 package com.example.compaq.nfc_student;
 
-import java.io.IOException;
+/**
+ * 接收教师端连接的学生端服务器线程
+ */
 
+import java.io.IOException;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
-/**
- * 服务器连接线程
- * @author liujian
- *
- */
 public class BluetoothServerThread extends Thread {
 
 	private Handler serviceHandler;		//用于同Service通信的Handler
@@ -34,6 +30,9 @@ public class BluetoothServerThread extends Thread {
 		adapter = BluetoothAdapter.getDefaultAdapter();
 	}
 
+	/**
+	 * 关闭连接
+	 */
 	public void close(){
 		isInterrupted = true;
 		if (communThread != null) {
@@ -63,7 +62,7 @@ public class BluetoothServerThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			System.out.println("进程开始啦！！！！");
+			System.out.println("进程开始！");
 			serverSocket = adapter.listenUsingRfcommWithServiceRecord("Server", BluetoothTools.PRIVATE_UUID);
 			while(!isInterrupted){
 				socket = serverSocket.accept();
@@ -72,34 +71,18 @@ public class BluetoothServerThread extends Thread {
 					//开启通讯线程
 					communThread = new BluetoothComThread(serviceHandler, socket);
 					communThread.start();
-//					//发送连接成功消息，消息的obj字段为连接的socket
-//					Message msg = serviceHandler.obtainMessage();
-//					msg.what = BluetoothTools.MESSAGE_CONNECT_SUCCESS;
-//					msg.obj = socket;
-//					msg.sendToTarget();
 				} else {
 					//发送连接失败消息
-					//	serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
+					serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
 					break;
 				}
 			}
 		} catch (Exception e) {
 			//发送连接失败消息
-			//	serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
+			serviceHandler.obtainMessage(BluetoothTools.MESSAGE_CONNECT_ERROR).sendToTarget();
 			e.printStackTrace();
 			return;
 		}
-		/*
-		finally {
-			Log.v("调试" , "BluetoothServerConnThread退出");
-			try {
-				serverSocket.close();
-			} catch (Exception e) {
-				Log.v("调试" , "serverSocket.close()  failed");
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 }

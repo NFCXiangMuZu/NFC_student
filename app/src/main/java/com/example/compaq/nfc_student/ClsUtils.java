@@ -1,19 +1,14 @@
 package com.example.compaq.nfc_student;
 
+/**
+ * 蓝牙连接配对工具类
+ */
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.ContentValues;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
-import android.widget.Toast;
-import android.content.ContextWrapper;
-
-
 
 public class ClsUtils
 {
@@ -41,6 +36,14 @@ public class ClsUtils
         return returnValue.booleanValue();
     }
 
+    /**
+     * 设置蓝牙配对所用的pin码
+     * @param btClass 蓝牙工具类
+     * @param btDevice 要连接的蓝牙设备
+     * @param str pin码串
+     * @return
+     * @throws Exception
+     */
     static public boolean setPin(Class btClass, BluetoothDevice btDevice,
                                  String str) throws Exception
     {
@@ -73,7 +76,13 @@ public class ClsUtils
 
     }
 
-    // 取消用户输入
+    /**
+     * 取消连接过程用户的确认输入
+     * @param btClass 蓝牙工具类
+     * @param device  需要取消配对的远程蓝牙设备
+     * @return
+     * @throws Exception
+     */
     static public boolean cancelPairingUserInput(Class btClass,
                                                  BluetoothDevice device)
 
@@ -85,7 +94,13 @@ public class ClsUtils
         return returnValue.booleanValue();
     }
 
-    // 取消配对
+    /**
+     * 取消配对
+     * @param btClass 蓝牙工具类
+     * @param device  需要取消配对的远程蓝牙设备
+     * @return
+     * @throws Exception
+     */
     static public boolean cancelBondProcess(Class btClass,
                                             BluetoothDevice device)
 
@@ -97,8 +112,8 @@ public class ClsUtils
     }
 
     /**
-     *
-     * @param clsShow
+     *取的蓝牙操作相关的所有方法和变量
+     * @param clsShow 蓝牙工具类
      */
     static public void printAllInform(Class clsShow)
     {
@@ -136,7 +151,12 @@ public class ClsUtils
         }
     }
 
-
+    /**
+     * 蓝牙设备配对
+     * @param strAddr 远程设备蓝牙地址
+     * @param strPsw 要设置的pin码串
+     * @return
+     */
     static public boolean pair(String strAddr, String strPsw)
     {
         boolean result = false;
